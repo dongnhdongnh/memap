@@ -50,8 +50,8 @@ export class CurrentLocation extends React.Component {
     loadMap() {
         if (this.props && this.props.google) {
             // checks if google is available
-            //const { google } = this.props;
-            var goolge=this.props.google;
+            const { google } = this.props;
+            //   var goolge=this.props.google;
             const maps = google.maps;
 
             const mapRef = this.refs.map;
@@ -87,35 +87,54 @@ export class CurrentLocation extends React.Component {
         }
     }
 
+    inc() {
+        console.log('before: ' + this.state.test);
+        this.setState({
+            test: this.state.test + 1
+        });
+        console.log('after: ' + this.state.test);
+    }
+
 
     renderChildren() {
         const { children } = this.props;
-    
-        if (!children) return;
-    
-        return React.Children.map(children, c => {
-          if (!c) return;
-    
-          return React.cloneElement(c, {
-            map: this.map,
-            google: this.props.google,
-            mapCenter: this.state.currentLocation
-          });
-        });
-      }
 
-      render() {
+        if (!children) return;
+
+        return React.Children.map(children, c => {
+            if (!c) return;
+
+            return React.cloneElement(c, {
+                map: this.map,
+                google: this.props.google,
+                mapCenter: this.state.currentLocation
+            });
+        });
+    }
+
+    render() {
         const style = Object.assign({}, mapStyles.map);
         return (
-          <div>
-            <div style={style} ref="map">
-              Loading map...
+            <div>
+                <div style={style} ref="map">
+                    Loading map...
+                 </div>
+                {this.renderChildren()} 
+                
             </div>
-            {this.renderChildren()}
-          </div>
         );
-      }
+    }
 
 }
+
+CurrentLocation.defaultProps = {
+    zoom: 14,
+    initialCenter: {
+        lat: -1.2884,
+        lng: 36.8233
+    },
+    centerAroundCurrentLocation: false,
+    visible: true
+};
 
 export default CurrentLocation;
