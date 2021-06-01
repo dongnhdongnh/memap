@@ -5,7 +5,8 @@ const mapStyles = {
     map: {
         position: 'absolute',
         width: '100%',
-        height: '100%'
+        height: '100%',
+        color: '#dceafa'
     }
 };
 
@@ -47,13 +48,16 @@ export class CurrentLocation extends React.Component {
             this.recenterMap();
         }
     }
+    handleMapClick = (the_click) => {
+        console.log("click map"+the_click.lat+","+the_click.lng);
+        //alert("Click ");
+      };
     loadMap() {
         if (this.props && this.props.google) {
             // checks if google is available
             const { google } = this.props;
             //   var goolge=this.props.google;
             const maps = google.maps;
-
             const mapRef = this.refs.map;
 
             // reference to the actual DOM element
@@ -73,6 +77,13 @@ export class CurrentLocation extends React.Component {
 
             // maps.Map() is constructor that instantiates the map
             this.map = new maps.Map(node, mapConfig);
+            this.map.addListener('click', (e) => {
+                const the_click =  { lat: e.latLng.lat(), lng: e.latLng.lng()};
+                this.handleMapClick(the_click);
+              });
+          // this.map.onClick={() => console.log('click')}
+       //   maps.onMapClicked=this.onMapClicked;
+            //this.map.onClick = this.onMapClicked;
         }
     }
     recenterMap() {
@@ -80,7 +91,7 @@ export class CurrentLocation extends React.Component {
         const current = this.state.currentLocation;
         const google = this.props.google;
         const maps = google.maps;
-
+      
         if (map) {
             let center = new maps.LatLng(current.lat, current.lng);
             map.panTo(center);
@@ -119,8 +130,8 @@ export class CurrentLocation extends React.Component {
                 <div style={style} ref="map">
                     Loading map...
                  </div>
-                {this.renderChildren()} 
-                
+                {this.renderChildren()}
+
             </div>
         );
     }
