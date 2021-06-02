@@ -1,4 +1,4 @@
-let map,center;
+let map, center;
 
 function initMap() {
   map = new google.maps.Map(document.getElementById("map"), {
@@ -9,23 +9,22 @@ function initMap() {
     scaleControl: true,
     gestureHandling: "greedy"
   });
-  center=new google.maps.LatLng(20.994137455214727,  105.80647230148315);
+  center = new google.maps.LatLng(20.994137455214727, 105.80647230148315);
   // Create a <script> tag and set the USGS URL as the source.
   const script = document.createElement("script");
   // This example uses a local copy of the GeoJSON stored at
   // http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojsonp
 
-  script.charset="UTF-8";
+  script.charset = "UTF-8";
   script.src =
     "./map.geojson";
   //script.textContent="eqfeed_callback("+script.textContent+")";
   console.log(script.textContent);
   document.getElementsByTagName("head")[0].appendChild(script);
-  moveToCenter();
-// moveToCurrentLocation();
+  moveToCenter(); 
+  // moveToCurrentLocation();
 }
-function moveToCenter()
-{
+function moveToCenter() {
   map.setCenter(center);
 }
 function moveToCurrentLocation() {
@@ -52,8 +51,18 @@ function moveToCurrentLocation() {
   }
 
 }
-
-
+function openNav() {
+  document.getElementById("mySidenav").style.width = "250px";
+}
+function closeNav() {
+  document.getElementById("mySidenav").style.width = "0";
+}
+function showInforOnNavBar(name, desc, coords){
+  document.getElementById("currentMapName").innerHTML = name;
+  document.getElementById("currentMapDesc").innerHTML = desc;
+  document.getElementById("currentMapLoc").innerHTML = coords;
+  openNav();
+}
 // Loop through the results array and place a marker for each
 // set of coordinates.
 const eqfeed_callback = function (results) {
@@ -92,43 +101,44 @@ const eqfeed_callback = function (results) {
     labelOrigin: new google.maps.Point(20, 50)
   };
   const infowindow = new google.maps.InfoWindow(
-    {pixelOffset: new google.maps.Size(-50,0)}
+    { pixelOffset: new google.maps.Size(-50, 0) }
   );
   for (let i = 0; i < results.features.length; i++) {
     const coords = results.features[i].geometry.coordinates;
     const latLng = new google.maps.LatLng(coords[1], coords[0]);
-    const name= results.features[i].properties.name;
-    const desc= results.features[i].properties.desc;
-    const type=results.features[i].properties["marker-symbol"];
-    var img=imageHome;
-    if(type=="fast-food") img=imageFood;
-    if(type=="garden") img=imagePark;
+    const name = results.features[i].properties.name;
+    const desc = results.features[i].properties.desc;
+    const type = results.features[i].properties["marker-symbol"];
+    var img = imageHome;
+    if (type == "fast-food") img = imageFood;
+    if (type == "garden") img = imagePark;
     console.log(name);
-    const marker=   new google.maps.Marker({
+    const marker = new google.maps.Marker({
       position: latLng,
       icon: img,
-      name:name,
+      name: name,
       label: {
-        text:  name,
+        text: name,
         //  color: "#4682B4",
-       // fontSize: "20px",
-       // fontWeight: "bold",
+        // fontSize: "20px",
+        // fontWeight: "bold",
         className: "my-label-class"
       },
       title: "Hello World!",
 
       map: map,
     });
-    
+
     marker.addListener("click", () => {
       //infowindow.
-      infowindow.setContent(infor(name,desc,coords));
+      showInforOnNavBar(name, desc, coords);
+      infowindow.setContent(infor(name, desc, coords));
       infowindow.open(map, marker);
     });
   }
 };
 
 
-function infor(name,desc,coords){
-  return "<div><b>INFO</b><br><b>Name: "+name+"</b><br>Desc: "+desc+"...bla,bla,bla<br>Location: "+coords[0]+" & "+coords[1]+"</div>";
+function infor(name, desc, coords) {
+  return "<div><b>INFO</b><br><b>Name: " + name + "</b><br>Desc: " + desc + "...bla,bla,bla<br>Location: " + coords[0] + " & " + coords[1] + "</div>";
 }
